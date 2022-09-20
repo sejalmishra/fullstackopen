@@ -1,0 +1,13 @@
+browser->server: HTTP POST https://studies.cs.helsinki.fi/exampleapp/new_note_spa
+note over browser:
+The POST request to the address new_note_spa contains the new note
+as JSON-data containing both the content of the note (content)
+and the timestamp (date)
+end note
+server->browser: HTTP status code 201
+
+note over server:
+The js code get the form element and register event handler
+to handle the form submit event. It first prevent the default
+method of submitting.Then it creats the new note adds it to the 
+notes list and renders it and send new note to server.
