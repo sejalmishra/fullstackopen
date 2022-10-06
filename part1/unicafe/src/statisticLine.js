@@ -1,4 +1,4 @@
-function StatisticsLine({ text, value }) {
+function StatisticsLine({ text, value }) { 
   return (
     <tr>
       <td>{text}</td>
