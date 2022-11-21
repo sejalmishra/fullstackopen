@@ -15,7 +15,7 @@ function App() {
       const res = axios.get(`https://restcountries.com/v3.1/name/${name}`);
       res.then((res) => {
         const filteredCountries = res.data.map((r) => {
-          return r;
+          return r; 
         });
         setCountries(filteredCountries);
         if (filteredCountries.length === 1) {
