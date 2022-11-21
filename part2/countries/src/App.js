@@ -11,6 +11,7 @@ function App() {
   function fetchData() {
     const name = searchCountry;
     if (name !== "") {
+      try{
       const res = axios.get(`https://restcountries.com/v3.1/name/${name}`);
       res.then((res) => {
         const filteredCountries = res.data.map((r) => {
@@ -21,6 +22,9 @@ function App() {
           getWeatherData(countries[0].name.common);
         }
       });
+      }catch(e) {
+        console.log(e)
+      }
     }
   }
 
@@ -29,13 +33,17 @@ function App() {
   }, [searchCountry]);
 
   const getWeatherData = (cityName) => {
-    const res = axios.get(
+    
+    axios.get(
       `https://api.openweathermap.org/data/2.5/weather?q=${cityName}&appid=${process.env.REACT_APP_API_KEY}&units=metric`
-    );
-    res.then((res) => {
+    )
+    .then((res) => {
       setWeatherData(res.data);
-    });
-  };
+    }).catch((error) => {
+      console.log(error)
+    })
+
+  }
 
   return (
     <div>

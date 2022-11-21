@@ -29,9 +29,9 @@ function Countries({ countries, weatherData }) {
 
         <h2>Weather in {countries[0].capital[0]}</h2>
         <p>temprature - {weatherData?.main?.temp} Celcius</p>
-        <img
+        {weatherData.weather ? <img
           src={`http://openweathermap.org/img/wn/${weatherData?.weather[0]?.icon}@2x.png`}
-        />
+        /> : ""}
         <p>wind - {weatherData?.wind?.speed} m/s</p>
       </div>
     );
