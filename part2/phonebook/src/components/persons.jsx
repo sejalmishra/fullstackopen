@@ -5,7 +5,7 @@ const Persons = ({search,filterPersons,persons,setPersons,setErrorMessage,setErr
     if(window.confirm(`Delete ${name} ?`)){
     service.deletePerson(id)
     .then(response => {
-      if(response){
+      if(response.data=='deleted'){ 
         setPersons(persons.filter(people => people.id!==id))
         setErrorMessage(`${name} deleted`)
         setErrorMessageType("positive")
@@ -22,11 +22,8 @@ const Persons = ({search,filterPersons,persons,setPersons,setErrorMessage,setErr
       }, 5000)
     })
 
-    }
-    
-    
+    } 
   }
-
   return (
     <div>
       {(search!=="") ? 
@@ -34,14 +31,14 @@ const Persons = ({search,filterPersons,persons,setPersons,setErrorMessage,setErr
       return (
         <div>
         <span key={person.id}>{person.name} {person.number}</span>
-        <button onClick={()=>deletingPerson(person.id)}>delete</button>
+        <button onClick={()=>deletingPerson(person._id)}>delete</button>
         </div>
       )
     }) : 
       persons.map((person) => {
       return (
-        <div>
-        <span key={person.id}>{person.name} {person.number}</span>
+        <div key={person.id}>
+        <span>{person.name} {person.number}</span>
         <button onClick={()=>deletingPerson(person.id,person.name)}>delete</button>
         </div>
       )

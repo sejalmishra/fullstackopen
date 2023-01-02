@@ -13,7 +13,6 @@ const AddNewPerson = ({setPersons,persons,setErrorMessage,setErrorMessageType}) 
     const newObject = {
       name: found.name,
       number: newNumber,
-      id: found.id
     }
     if(window.confirm(`${found.name} is already added to phonebook, replace the old number with a new one?`)){
       service.update(found.id, newObject)
@@ -35,7 +34,6 @@ const AddNewPerson = ({setPersons,persons,setErrorMessage,setErrorMessageType}) 
     const newObject = {
       name: newName,
       number: newNumber,
-      id: persons.length+1
     }
     service.addNewPerson(newObject)
     .then(returnNewPerson => {
@@ -49,11 +47,22 @@ const AddNewPerson = ({setPersons,persons,setErrorMessage,setErrorMessageType}) 
       setNewNumber("")
     })
     .catch(error => {
-      console.log("error",error)
+      console.log("erroe",error)
+      if(error.response.data.error){
+        setErrorMessage(error.response.data.error)
+      setErrorMessageType("negative")
+      setTimeout(() => {
+          setErrorMessage(null)
+      }, 5000)
+      }else{
+      setErrorMessage(error.response.data.message)
+      setErrorMessageType("negative")
+      setTimeout(() => {
+          setErrorMessage(null)
+      }, 5000)}
     })
     }
   }
-
   return (
     <div>
       <form onSubmit={handleSubmit}>
