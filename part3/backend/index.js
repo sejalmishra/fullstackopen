@@ -5,8 +5,7 @@ const mongoose = require('mongoose')
 const PhoneBook = require('./models/person')
 const app = express()
 
-const url =
-  "mongodb+srv://sejal:sejal@cluster0.4fabis1.mongodb.net/?retryWrites=true&w=majority";
+const url =process.env.MONGODB_URI;
 
 mongoose
   .connect(url, {
@@ -24,7 +23,7 @@ app.use(morgan("tiny"));
 app.use(cors());
 //npm run dev -> to start backend server
 
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT;
 app.listen(PORT);
 console.log(`listening on port ${PORT}`);
 
