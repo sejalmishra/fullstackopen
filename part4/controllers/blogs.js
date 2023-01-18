@@ -1,16 +1,8 @@
-const jwt = require('jsonwebtoken');
 const blogsRouter = require('express').Router();
 const Blog = require('../models/blog');
 const User = require('../models/user');
-const config = require('../utils/config')
 
-const getTokenFrom = request => {
-  const authorization = request.get('authorization')
-  if (authorization && authorization.toLowerCase().startsWith('bearer ')) {
-    return authorization.substring(7)
-  }
-  return null
-}
+
 
 blogsRouter.get('/', async (request, response, next) => {
  try{
@@ -25,12 +17,7 @@ blogsRouter.get('/', async (request, response, next) => {
 
 blogsRouter.post('/', async (request, response, next) => {
   const body = request.body
-  const token = getTokenFrom(request)
-  const decodedToken = jwt.verify(token, config.SECRET)
-  if(!decodedToken.id){
-    return response.status(401).json({ error: 'token missing or invalid' })
-  }
-  const user = await User.findById(decodedToken.id)
+  const user = request.user
   const blog = new Blog({
     title: body.title,
     author: body.author,
@@ -51,15 +38,10 @@ blogsRouter.post('/', async (request, response, next) => {
 
 blogsRouter.delete('/:id', async (request, response, next) => {
   const {id} = request.params
-  const token = getTokenFrom(request)
-  const decodedToken = jwt.verify(token, config.SECRET)
-  if(!decodedToken.id){
-    return response.status(401).json({ error: 'token missing or invalid' })
-  }
+  const user = request.user
   try{
-  //check for wrong user(tomorrow)
   const blog = await Blog.findById(id)
-  if(blog.user.toString() === decodedToken.id.toString()){
+  if(blog.user.toString() === user._id.toString()){
     const deletedBlog = await Blog.findByIdAndDelete(id);
     response.status(200).send({
   message: "Resourse deleted successfully",
@@ -76,11 +58,17 @@ blogsRouter.delete('/:id', async (request, response, next) => {
 blogsRouter.put('/:id', async (request, response, next) => {
   const {id} = request.params;
   const body = request.body;
+  const user = request.user
   try{
+    const blog = await Blog.findById(id)
+    if(blog.user.toString() === user._id.toString()){
     const updatedBlog = await Blog.findByIdAndUpdate(id, body , {new: true});
     if(updatedBlog){
       response.status(200).json(updatedBlog)
     }
+    }else{
+    return response.status(401).json({ error: 'action not allowed' })
+  }
   }catch(error){
     next(error)
   }
