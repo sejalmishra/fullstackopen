@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import Blog from './components/Blog'
+import CreareBlog from './components/CreateBlog'
 import blogService from './services/blogs'
 import loginService from './services/login'
 
@@ -18,6 +19,7 @@ const App = () => {
       window.localStorage.setItem(
         'loggedBlogUser', JSON.stringify(user)
       ) 
+      blogService.setToken(user.token)
       setUser(user)
       setUsername('')
       setPassword('')
@@ -31,11 +33,27 @@ const App = () => {
     setUser(null);
   }
 
-  useEffect(() => {
-    blogService.getAll().then(blogs =>
-      setBlogs( blogs )
-    )  
-  }, [])
+    const getAllBlogs = async () => {
+    const result = await blogService.getAll() 
+    setBlogs(result)
+   }
+
+  const handleCreateBlog = async (event, blog) => {
+    event.preventDefault();
+    try{
+      const newBlog = await blogService.create(blog)
+      const newBlogObj = {
+        author: newBlog.author,
+        id: newBlog.id,
+        likes: newBlog.likes,
+        title: newBlog.title,
+        url: newBlog.url
+      }
+      setBlogs([...blogs,newBlogObj])
+    }catch(error) {
+      console.log(error)
+    }
+    }
 
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem('loggedBlogUser')
@@ -43,6 +61,7 @@ const App = () => {
       const user = JSON.parse(loggedUserJSON)
       setUser(user)
       blogService.setToken(user.token)
+      getAllBlogs()
     }
   }, [])
 
@@ -79,6 +98,7 @@ const App = () => {
     <div>
       <h2>blogs</h2>
       <p>{user.username} logged in<button onClick={handleLogout}>logout</button></p>
+      <CreareBlog handleCreateBlog={handleCreateBlog}/>
       {blogs.map(blog =>
         <Blog key={blog.id} blog={blog} />
       )}
